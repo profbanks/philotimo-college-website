@@ -1,0 +1,50 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="760" height="210" viewBox="0 0 760 210" role="img" aria-labelledby="title desc">
+  <title id="title">PHILOTIMO College logo</title>
+  <desc id="desc">A green, navy, and gold college logo with a shield, health cross, open book, digital circuit motif, and the motto Honour in Service; Dignity in Labour.</desc>
+  <defs>
+    <linearGradient id="shieldGradient" x1="54" x2="170" y1="22" y2="178" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#0a8f73"/>
+      <stop offset="1" stop-color="#17324d"/>
+    </linearGradient>
+    <linearGradient id="goldGradient" x1="62" x2="162" y1="36" y2="170" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#f4c75d"/>
+      <stop offset="1" stop-color="#b8750f"/>
+    </linearGradient>
+    <filter id="softShadow" x="-20%" y="-20%" width="140%" height="140%">
+      <feDropShadow dx="0" dy="8" stdDeviation="8" flood-color="#0d322c" flood-opacity=".22"/>
+    </filter>
+  </defs>
+
+  <g filter="url(#softShadow)">
+    <path fill="#fff" d="M112 9 191 38v61c0 52-31 82-79 102-48-20-79-50-79-102V38L112 9Z"/>
+    <path fill="url(#shieldGradient)" d="M112 20 180 45v53c0 43-25 69-68 87-43-18-68-44-68-87V45l68-25Z"/>
+    <path fill="none" stroke="url(#goldGradient)" stroke-width="5" d="M112 31 168 52v45c0 34-19 56-56 72-37-16-56-38-56-72V52l56-21Z"/>
+
+    <path fill="#fff" d="M101 68h22v23h23v22h-23v23h-22v-23H78V91h23V68Z"/>
+
+    <path fill="none" stroke="#fff0cf" stroke-linecap="round" stroke-linejoin="round" stroke-width="6" d="M72 140c13-10 27-13 42-4 14-9 28-6 41 4"/>
+    <path fill="none" stroke="#fff0cf" stroke-linecap="round" stroke-linejoin="round" stroke-width="4" d="M114 136V82"/>
+
+    <path fill="none" stroke="#f4c75d" stroke-linecap="round" stroke-linejoin="round" stroke-width="4" d="M74 61h-14v20M150 61h14v20M69 116H55M155 116h14"/>
+    <circle cx="60" cy="61" r="5" fill="#f4c75d"/>
+    <circle cx="164" cy="61" r="5" fill="#f4c75d"/>
+    <circle cx="55" cy="116" r="5" fill="#f4c75d"/>
+    <circle cx="169" cy="116" r="5" fill="#f4c75d"/>
+  </g>
+
+  <g fill="#10201d">
+    <text x="228" y="72" font-family="Segoe UI, Arial, sans-serif" font-size="46" font-weight="900" letter-spacing="0">PHILOTIMO</text>
+    <text x="231" y="104" font-family="Segoe UI, Arial, sans-serif" font-size="18" font-weight="800" letter-spacing=".6">COLLEGE OF HEALTH SCIENCES &amp; INFORMATION TECHNOLOGY</text>
+  </g>
+
+  <g transform="translate(231 125)">
+    <path fill="#0a8f73" d="M0 0h360c14 0 25 11 25 25s-11 25-25 25H0l20-25L0 0Z"/>
+    <text x="34" y="32" fill="#fff" font-family="Segoe UI, Arial, sans-serif" font-size="15" font-weight="900" letter-spacing=".6">HONOUR IN SERVICE; DIGNITY IN LABOUR</text>
+  </g>
+
+  <g fill="none" stroke="#c58a12" stroke-linecap="round" stroke-width="4">
+    <path d="M650 141h64"/>
+    <path d="M730 141h12"/>
+  </g>
+  <text x="231" y="190" fill="#63716f" font-family="Segoe UI, Arial, sans-serif" font-size="15" font-weight="700">Health. Knowledge. Technology. Integrity.</text>
+</svg>
