@@ -16,6 +16,12 @@ Open:
 http://localhost:4181/
 ```
 
+Admin desk:
+
+```text
+http://localhost:4181/?admin=1#admin
+```
+
 Default local admin code:
 
 ```text
