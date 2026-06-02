@@ -58,3 +58,21 @@ Local records are stored on this computer at:
 ```text
 college-export\data\local-college-state.json
 ```
+
+## Local Email Notifications
+
+When an administrator screens, approves, rejects, enrols, or updates payment status for an applicant, the backend creates a corresponding email notice immediately.
+
+To send real emails from localhost, set SMTP details before starting the server:
+
+```powershell
+$env:SMTP_HOST = "smtp.example.com"
+$env:SMTP_PORT = "587"
+$env:SMTP_USERNAME = "your-smtp-username"
+$env:SMTP_PASSWORD = "your-smtp-password"
+$env:SMTP_FROM = "admissions@yourdomain.com"
+$env:SMTP_FROM_NAME = "PHILOTIMO College Admissions"
+powershell.exe -ExecutionPolicy Bypass -File .\local-college-server.ps1
+```
+
+If SMTP is not configured, the notice is saved in the local JSON file and the admin dashboard reports that email delivery is not configured yet.
