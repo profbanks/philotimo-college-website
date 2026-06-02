@@ -874,6 +874,12 @@ textarea:focus {
   font-weight: 800;
 }
 
+.form-result[data-tone="error"],
+.portal-card output[data-tone="error"],
+.contact-form output[data-tone="error"] {
+  color: var(--danger);
+}
+
 .section--fees {
   background: var(--surface-soft);
 }
@@ -919,6 +925,174 @@ textarea:focus {
 
 .portal-card h3 {
   margin-bottom: 4px;
+}
+
+.admin-portal {
+  margin-top: 34px;
+  padding: 28px;
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  background: var(--surface-soft);
+}
+
+.admin-access {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(280px, 380px);
+  gap: 24px;
+  align-items: end;
+}
+
+.admin-access p,
+.admin-toolbar span,
+.record-meta,
+.record-card p,
+.empty-records {
+  color: var(--muted);
+}
+
+.admin-access-form {
+  display: grid;
+  gap: 12px;
+}
+
+.admin-status {
+  display: block;
+  margin-top: 14px;
+}
+
+.admin-workspace {
+  display: grid;
+  gap: 22px;
+  margin-top: 24px;
+}
+
+.portal-summary {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 12px;
+}
+
+.portal-summary div {
+  min-height: 92px;
+  display: grid;
+  align-content: center;
+  padding: 16px;
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  background: #fff;
+}
+
+.portal-summary strong {
+  color: var(--primary-dark);
+  font-size: 1.75rem;
+  line-height: 1;
+}
+
+.portal-summary span {
+  color: var(--muted);
+  font-weight: 800;
+}
+
+.admin-toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.admin-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 18px;
+}
+
+.admin-panel {
+  display: grid;
+  align-content: start;
+  gap: 14px;
+}
+
+.admin-panel--wide {
+  grid-column: 1 / -1;
+}
+
+.record-list {
+  display: grid;
+  gap: 12px;
+}
+
+.record-card {
+  display: grid;
+  gap: 10px;
+  padding: 16px;
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  background: #fff;
+}
+
+.record-card h4 {
+  margin: 0;
+  font-size: 1rem;
+  line-height: 1.3;
+}
+
+.record-meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px 12px;
+  font-size: 0.9rem;
+}
+
+.record-card p {
+  margin: 0;
+}
+
+.status-chip {
+  width: max-content;
+  max-width: 100%;
+  border-radius: 999px;
+  padding: 5px 10px;
+  background: #e7f6f1;
+  color: var(--primary-dark);
+  font-size: 0.78rem;
+  font-weight: 900;
+  text-transform: uppercase;
+}
+
+.status-chip--pending {
+  background: var(--surface-warm);
+  color: var(--accent-strong);
+}
+
+.status-chip--rejected {
+  background: #fbe8e8;
+  color: var(--danger);
+}
+
+.status-chip--enrolled {
+  background: #e6edf6;
+  color: var(--navy);
+}
+
+.record-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.record-actions .button {
+  min-height: 38px;
+  padding: 8px 12px;
+  font-size: 0.88rem;
+}
+
+.empty-records {
+  padding: 18px;
+  border: 1px dashed var(--line);
+  border-radius: var(--radius);
+  background: #fff;
+  font-weight: 700;
 }
 
 .gallery-section {
@@ -1105,6 +1279,10 @@ details p {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 
+  .portal-summary {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
   .hero__content,
   .two-column,
   .fees-layout,
@@ -1188,6 +1366,8 @@ details p {
   .hero__panel-grid,
   .approval-grid,
   .form-row,
+  .admin-access,
+  .admin-grid,
   .footer-grid {
     grid-template-columns: 1fr;
   }
@@ -1244,8 +1424,13 @@ details p {
   .stats-grid,
   .programme-grid,
   .portal-grid,
+  .portal-summary,
   .gallery-grid {
     grid-template-columns: 1fr;
+  }
+
+  .admin-portal {
+    padding: 18px;
   }
 
   .section {
