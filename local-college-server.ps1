@@ -478,6 +478,8 @@ Write-Host "Serving $root"
 try {
   while ($true) {
     $client = $server.AcceptTcpClient()
+    $client.ReceiveTimeout = 3000
+    $client.SendTimeout = 3000
     try {
       $stream = $client.GetStream()
       $request = Read-HttpRequest -Stream $stream
