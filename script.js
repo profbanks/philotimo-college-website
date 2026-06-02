@@ -215,6 +215,7 @@ const searchInput = $("[data-course-search]");
 const emptyState = $("[data-empty-state]");
 const programmeSelect = $("[data-programme-select]");
 const adminLoginForm = $("[data-admin-login-form]");
+const adminPortal = $("[data-admin-portal]");
 const adminWorkspace = $("[data-admin-workspace]");
 const adminStatus = $("[data-admin-status]");
 const applicationsList = $("[data-applications-list]");
@@ -223,7 +224,8 @@ const contactsList = $("[data-contacts-list]");
 const verificationsList = $("[data-verifications-list]");
 const refreshAdminButton = $("[data-refresh-admin]");
 let activeFilter = "all";
-let adminToken = sessionStorage.getItem("philotimoCollegeAdminToken") || "";
+const isAdminView = new URLSearchParams(window.location.search).get("admin") === "1";
+let adminToken = isAdminView ? sessionStorage.getItem("philotimoCollegeAdminToken") || "" : "";
 
 function renderProgrammes() {
   const query = searchInput.value.trim().toLowerCase();
@@ -585,7 +587,7 @@ function renderAdminState(state) {
 }
 
 async function loadAdminState() {
-  if (!adminToken) { return; }
+  if (!isAdminView || !adminToken || !adminWorkspace || !adminStatus) { return; }
 
   try {
     const state = await apiRequest("/api/admin/state", { method: "GET", auth: true });
@@ -601,6 +603,7 @@ async function loadAdminState() {
 }
 
 async function runAdminAction(action, id) {
+  if (!isAdminView || !adminStatus) { return; }
   setResult(adminStatus, "Updating record...");
 
   try {
@@ -616,6 +619,12 @@ async function runAdminAction(action, id) {
 }
 
 function initAdminPortal() {
+  if (!isAdminView || !adminPortal || !adminLoginForm || !adminWorkspace || !adminStatus || !refreshAdminButton) {
+    return;
+  }
+
+  adminPortal.hidden = false;
+
   adminLoginForm.addEventListener("submit", async (event) => {
     event.preventDefault();
     setResult(adminStatus, "Unlocking administrator workspace...");
