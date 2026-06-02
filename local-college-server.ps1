@@ -21,6 +21,7 @@ function New-EmptyState {
     applications = @()
     contacts = @()
     verifications = @()
+    notifications = @()
   }
 }
 
@@ -30,7 +31,7 @@ function Normalize-State {
   $normalized = New-EmptyState
   if (-not $State) { return $normalized }
 
-  foreach ($key in @("applications", "contacts", "verifications")) {
+  foreach ($key in @("applications", "contacts", "verifications", "notifications")) {
     if ($State.PSObject.Properties.Name -contains $key -and $State.$key) {
       $normalized.$key = @($State.$key)
     }
@@ -130,6 +131,114 @@ function Public-Application {
     adminNote = Clean $Application.adminNote
     createdAt = $Application.createdAt
   }
+}
+
+function Send-EmailNotification {
+  param($Notification)
+
+  if (-not (Clean $Notification.to)) {
+    return [pscustomobject]@{ status = "skipped"; error = "No email address is attached to this record."; sentAt = "" }
+  }
+
+  if (-not (Clean $env:SMTP_HOST)) {
+    return [pscustomobject]@{ status = "not-configured"; error = "SMTP_HOST is not configured, so the email was saved but not sent."; sentAt = "" }
+  }
+
+  $port = if (Clean $env:SMTP_PORT) { [int](Clean $env:SMTP_PORT) } else { 587 }
+  $from = if (Clean $env:SMTP_FROM) { Clean $env:SMTP_FROM } else { "no-reply@philotimo.local" }
+  $fromName = if (Clean $env:SMTP_FROM_NAME) { Clean $env:SMTP_FROM_NAME } else { "PHILOTIMO College Admissions" }
+  $enableSsl = if (Clean $env:SMTP_ENABLE_SSL) { [Convert]::ToBoolean((Clean $env:SMTP_ENABLE_SSL)) } else { $true }
+
+  $message = $null
+  $client = $null
+  try {
+    $message = [System.Net.Mail.MailMessage]::new()
+    $message.From = [System.Net.Mail.MailAddress]::new($from, $fromName)
+    $message.To.Add((Clean $Notification.to))
+    $message.Subject = Clean $Notification.subject
+    $message.Body = Clean $Notification.body
+    $message.IsBodyHtml = $false
+
+    $client = [System.Net.Mail.SmtpClient]::new((Clean $env:SMTP_HOST), $port)
+    $client.EnableSsl = $enableSsl
+    if (Clean $env:SMTP_USERNAME) {
+      $client.Credentials = [System.Net.NetworkCredential]::new((Clean $env:SMTP_USERNAME), (Clean $env:SMTP_PASSWORD))
+    }
+
+    $client.Send($message)
+    return [pscustomobject]@{ status = "sent"; error = ""; sentAt = (Get-Date).ToUniversalTime().ToString("o") }
+  } catch {
+    return [pscustomobject]@{ status = "failed"; error = $_.Exception.Message; sentAt = "" }
+  } finally {
+    if ($message) { $message.Dispose() }
+    if ($client) { $client.Dispose() }
+  }
+}
+
+function Add-EmailNotification {
+  param(
+    $State,
+    [string]$To,
+    [string]$Subject,
+    [string]$Body,
+    [string]$RelatedType,
+    [string]$RelatedId
+  )
+
+  $notification = New-Record @{
+    to = Clean $To
+    subject = Clean $Subject
+    body = Clean $Body
+    relatedType = Clean $RelatedType
+    relatedId = Clean $RelatedId
+    provider = "smtp"
+    status = "queued"
+    sentAt = ""
+    error = ""
+  }
+
+  $delivery = Send-EmailNotification -Notification $notification
+  $notification.status = $delivery.status
+  $notification.sentAt = $delivery.sentAt
+  $notification.error = $delivery.error
+  $State.notifications = @($notification) + @($State.notifications)
+  return $notification
+}
+
+function New-CollegeApplicationEmail {
+  param($Application, [string]$Action)
+
+  $subject = switch ($Action) {
+    "screen-application" { "PHILOTIMO College application: screening update" }
+    "approve-application" { "PHILOTIMO College application approved" }
+    "reject-application" { "PHILOTIMO College application update" }
+    "reopen-application" { "PHILOTIMO College application reopened" }
+    "enroll-student" { "PHILOTIMO College enrolment confirmation" }
+    "mark-payment-cleared" { "PHILOTIMO College payment cleared" }
+    "mark-payment-pending" { "PHILOTIMO College payment status update" }
+    default { "PHILOTIMO College application update" }
+  }
+
+  $matricLine = if (Clean $Application.matricNumber) { "Matric number: $($Application.matricNumber)`r`n" } else { "" }
+  $noteLine = if (Clean $Application.adminNote) { "Office note: $($Application.adminNote)`r`n" } else { "" }
+  $body = @"
+Dear $($Application.fullName),
+
+Your PHILOTIMO College application has been updated.
+
+Reference: $($Application.reference)
+$($matricLine)Programme: $($Application.programme)
+Level: $($Application.level)
+Admission status: $($Application.admissionStatus)
+Screening status: $($Application.screeningStatus)
+Payment status: $($Application.paymentStatus)
+$($noteLine)
+For enquiries, contact PHILOTIMO College admissions on 0902 550 2176 or 0703 901 5243.
+
+Honour in Service; Dignity in Labour.
+"@
+
+  return [pscustomobject]@{ subject = $subject; body = $body }
 }
 
 function Read-HttpRequest {
@@ -299,7 +408,9 @@ function Invoke-AdminAction {
     }
 
     if ($note) { $application.adminNote = $note }
-    return "$($application.fullName)'s application is now $($application.status)."
+    $emailContent = New-CollegeApplicationEmail -Application $application -Action $action
+    $email = Add-EmailNotification -State $State -To $application.email -Subject $emailContent.subject -Body $emailContent.body -RelatedType "application" -RelatedId $application.id
+    return [pscustomobject]@{ message = "$($application.fullName)'s application is now $($application.status)."; email = $email }
   }
 
   if ($action -eq "close-contact") {
@@ -307,7 +418,18 @@ function Invoke-AdminAction {
     if (-not $contact) { throw "Contact enquiry was not found." }
     $contact.status = "responded"
     if ($note) { $contact.adminNote = $note }
-    return "$($contact.name)'s enquiry has been marked as responded."
+    $body = @"
+Dear $($contact.name),
+
+Thank you for contacting PHILOTIMO College. Your enquiry has been reviewed by the admissions office.
+
+Message received:
+$($contact.message)
+
+Please contact 0902 550 2176 or 0703 901 5243 if you need further assistance.
+"@
+    $email = Add-EmailNotification -State $State -To $contact.email -Subject "PHILOTIMO College enquiry update" -Body $body -RelatedType "contact" -RelatedId $contact.id
+    return [pscustomobject]@{ message = "$($contact.name)'s enquiry has been marked as responded."; email = $email }
   }
 
   if ($action -eq "review-verification") {
@@ -315,7 +437,7 @@ function Invoke-AdminAction {
     if (-not $verification) { throw "Verification request was not found." }
     $verification.status = "reviewed"
     if ($note) { $verification.adminNote = $note }
-    return "Verification request $($verification.certificate) has been reviewed."
+    return [pscustomobject]@{ message = "Verification request $($verification.certificate) has been reviewed."; email = [pscustomobject]@{ status = "skipped"; error = "No email address is attached to certificate verification requests."; to = "" } }
   }
 
   throw "Unsupported admin action."
@@ -365,9 +487,9 @@ function Handle-Api {
     }
     $payload = Get-BodyJson -Request $Request
     $state = Read-State
-    $message = Invoke-AdminAction -State $state -Payload $payload
+    $result = Invoke-AdminAction -State $state -Payload $payload
     $saved = Write-State -State $state
-    Send-Json -Stream $Stream -StatusCode 200 -Body @{ message = $message; state = $saved }
+    Send-Json -Stream $Stream -StatusCode 200 -Body @{ message = $result.message; email = $result.email; state = $saved }
     return
   }
 
