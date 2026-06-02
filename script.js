@@ -214,7 +214,16 @@ const template = $("[data-programme-card-template]");
 const searchInput = $("[data-course-search]");
 const emptyState = $("[data-empty-state]");
 const programmeSelect = $("[data-programme-select]");
+const adminLoginForm = $("[data-admin-login-form]");
+const adminWorkspace = $("[data-admin-workspace]");
+const adminStatus = $("[data-admin-status]");
+const applicationsList = $("[data-applications-list]");
+const enrolledList = $("[data-enrolled-list]");
+const contactsList = $("[data-contacts-list]");
+const verificationsList = $("[data-verifications-list]");
+const refreshAdminButton = $("[data-refresh-admin]");
 let activeFilter = "all";
+let adminToken = sessionStorage.getItem("philotimoCollegeAdminToken") || "";
 
 function renderProgrammes() {
   const query = searchInput.value.trim().toLowerCase();
@@ -260,15 +269,44 @@ function populateProgrammeSelect() {
   });
 }
 
-function generateReference() {
-  const suffix = Math.random().toString(36).slice(2, 6).toUpperCase();
-  return `PHI-${new Date().getFullYear()}-${suffix}`;
+function getPayload(form) {
+  return Object.fromEntries(new FormData(form).entries());
 }
 
-function saveApplication(application) {
-  const existing = JSON.parse(localStorage.getItem("philotimoApplications") || "[]");
-  existing.unshift(application);
-  localStorage.setItem("philotimoApplications", JSON.stringify(existing.slice(0, 20)));
+async function apiRequest(path, options = {}) {
+  const headers = { "Content-Type": "application/json" };
+  if (options.auth && adminToken) {
+    headers.Authorization = `Bearer ${adminToken}`;
+  }
+
+  const response = await fetch(path, {
+    method: options.method || "POST",
+    headers,
+    body: options.body ? JSON.stringify(options.body) : undefined
+  });
+
+  const data = await response.json().catch(() => ({}));
+  if (!response.ok) {
+    throw new Error(data.message || "The request could not be completed.");
+  }
+  return data;
+}
+
+function setResult(output, message, tone = "success") {
+  output.textContent = message;
+  output.dataset.tone = tone;
+}
+
+function formatDate(value) {
+  if (!value) { return "Not recorded"; }
+  return new Intl.DateTimeFormat("en-NG", {
+    dateStyle: "medium",
+    timeStyle: "short"
+  }).format(new Date(value));
+}
+
+function statusLabel(status) {
+  return String(status || "pending").replace(/-/g, " ");
 }
 
 function updateFees() {
@@ -318,59 +356,283 @@ function initApplicationForm() {
   const form = $("[data-application-form]");
   const result = $("[data-form-result]");
 
-  form.addEventListener("submit", (event) => {
+  form.addEventListener("submit", async (event) => {
     event.preventDefault();
-    const formData = new FormData(form);
-    const reference = generateReference();
-    const application = {
-      reference,
-      fullName: formData.get("fullName"),
-      phone: formData.get("phone"),
-      email: formData.get("email"),
-      state: formData.get("state"),
-      programme: formData.get("programme"),
-      level: formData.get("level"),
-      qualification: formData.get("qualification"),
-      createdAt: new Date().toISOString(),
-      status: "Received for admissions screening"
-    };
+    setResult(result, "Submitting application...");
 
-    saveApplication(application);
-    result.textContent = `Application submitted. Reference: ${reference}. Status: Received for admissions screening.`;
-    form.reset();
+    try {
+      const data = await apiRequest("/api/applications", { body: getPayload(form) });
+      const reference = data.record?.reference || "generated";
+      const password = data.tempPassword ? ` Portal password: ${data.tempPassword}.` : "";
+      setResult(result, `Application submitted. Reference: ${reference}.${password} Status: Received for admissions screening.`);
+      form.reset();
+      if (adminToken) { loadAdminState(); }
+    } catch (error) {
+      setResult(result, error.message, "error");
+    }
   });
 }
 
 function initPortalForms() {
-  $("[data-login-form]").addEventListener("submit", (event) => {
+  $("[data-login-form]").addEventListener("submit", async (event) => {
     event.preventDefault();
-    const id = new FormData(event.currentTarget).get("studentId");
-    $("[data-login-result]").textContent = `Portal demo: ${id} was recognised for login simulation.`;
+    const output = $("[data-login-result]");
+    setResult(output, "Checking portal access...");
+
+    try {
+      const data = await apiRequest("/api/student/login", { body: getPayload(event.currentTarget) });
+      const record = data.record;
+      setResult(output, `${record.fullName}: ${record.admissionStatus}. Programme: ${record.programme}. Payment: ${record.paymentStatus}.`);
+    } catch (error) {
+      setResult(output, error.message, "error");
+    }
   });
 
-  $("[data-status-form]").addEventListener("submit", (event) => {
+  $("[data-status-form]").addEventListener("submit", async (event) => {
     event.preventDefault();
-    const reference = new FormData(event.currentTarget).get("reference").toString().trim().toUpperCase();
-    const applications = JSON.parse(localStorage.getItem("philotimoApplications") || "[]");
-    const match = applications.find((application) => application.reference === reference);
-    $("[data-status-result]").textContent = match
-      ? `${match.fullName}: ${match.status} for ${match.programme}.`
-      : "Reference not found in this browser. Submit the enrollment form first or check the number.";
+    const output = $("[data-status-result]");
+    setResult(output, "Checking admission status...");
+
+    try {
+      const data = await apiRequest("/api/admission-status", { body: getPayload(event.currentTarget) });
+      const record = data.record;
+      const matric = record.matricNumber ? ` Matric number: ${record.matricNumber}.` : "";
+      setResult(output, `${record.fullName}: ${record.admissionStatus} for ${record.programme}.${matric}`);
+    } catch (error) {
+      setResult(output, error.message, "error");
+    }
   });
 
-  $("[data-verify-form]").addEventListener("submit", (event) => {
+  $("[data-verify-form]").addEventListener("submit", async (event) => {
     event.preventDefault();
-    $("[data-verify-result]").textContent = "Verification request received. Connect this module to official records before public launch.";
+    const output = $("[data-verify-result]");
+    setResult(output, "Submitting verification request...");
+
+    try {
+      const data = await apiRequest("/api/certificate-verifications", { body: getPayload(event.currentTarget) });
+      setResult(output, data.message);
+      event.currentTarget.reset();
+      if (adminToken) { loadAdminState(); }
+    } catch (error) {
+      setResult(output, error.message, "error");
+    }
   });
 }
 
 function initContactForm() {
-  $("[data-contact-form]").addEventListener("submit", (event) => {
+  $("[data-contact-form]").addEventListener("submit", async (event) => {
     event.preventDefault();
-    const name = new FormData(event.currentTarget).get("name");
-    $("[data-contact-result]").textContent = `Thank you, ${name}. Your enquiry has been prepared for the admissions team.`;
-    event.currentTarget.reset();
+    const output = $("[data-contact-result]");
+    setResult(output, "Sending enquiry...");
+
+    try {
+      const data = await apiRequest("/api/contacts", { body: getPayload(event.currentTarget) });
+      setResult(output, data.message);
+      event.currentTarget.reset();
+      if (adminToken) { loadAdminState(); }
+    } catch (error) {
+      setResult(output, error.message, "error");
+    }
   });
+}
+
+function makeStatusChip(status) {
+  const chip = document.createElement("span");
+  const cleanStatus = String(status || "pending").toLowerCase();
+  chip.className = `status-chip status-chip--${cleanStatus}`;
+  chip.textContent = statusLabel(cleanStatus);
+  return chip;
+}
+
+function recordCard({ title, status, meta = [], body = "", actions = [] }) {
+  const card = document.createElement("article");
+  card.className = "record-card";
+
+  const heading = document.createElement("h4");
+  heading.textContent = title;
+  card.append(heading);
+
+  if (status) { card.append(makeStatusChip(status)); }
+
+  if (meta.length) {
+    const metaWrap = document.createElement("div");
+    metaWrap.className = "record-meta";
+    meta.forEach((item) => {
+      const span = document.createElement("span");
+      span.textContent = item;
+      metaWrap.append(span);
+    });
+    card.append(metaWrap);
+  }
+
+  if (body) {
+    const paragraph = document.createElement("p");
+    paragraph.textContent = body;
+    card.append(paragraph);
+  }
+
+  if (actions.length) {
+    const actionWrap = document.createElement("div");
+    actionWrap.className = "record-actions";
+    actions.forEach(({ label, action, id }) => {
+      const button = document.createElement("button");
+      button.className = "button button--ghost";
+      button.type = "button";
+      button.textContent = label;
+      button.addEventListener("click", () => runAdminAction(action, id));
+      actionWrap.append(button);
+    });
+    card.append(actionWrap);
+  }
+
+  return card;
+}
+
+function renderList(container, records, renderItem, emptyText) {
+  container.innerHTML = "";
+  if (!records.length) {
+    const empty = document.createElement("p");
+    empty.className = "empty-records";
+    empty.textContent = emptyText;
+    container.append(empty);
+    return;
+  }
+
+  records.forEach((record) => container.append(renderItem(record)));
+}
+
+function applicationActions(application) {
+  const status = String(application.status || "pending").toLowerCase();
+  const actions = [];
+
+  if (status === "pending") {
+    actions.push({ label: "Send To Screening", action: "screen-application", id: application.id });
+    actions.push({ label: "Approve", action: "approve-application", id: application.id });
+    actions.push({ label: "Reject", action: "reject-application", id: application.id });
+  } else if (status === "screening") {
+    actions.push({ label: "Approve", action: "approve-application", id: application.id });
+    actions.push({ label: "Reject", action: "reject-application", id: application.id });
+  } else if (status === "approved") {
+    actions.push({ label: "Enrol Student", action: "enroll-student", id: application.id });
+    if (application.paymentStatus !== "cleared") {
+      actions.push({ label: "Mark Payment Cleared", action: "mark-payment-cleared", id: application.id });
+    }
+  } else if (status === "enrolled") {
+    actions.push({
+      label: application.paymentStatus === "cleared" ? "Mark Payment Pending" : "Mark Payment Cleared",
+      action: application.paymentStatus === "cleared" ? "mark-payment-pending" : "mark-payment-cleared",
+      id: application.id
+    });
+  } else if (status === "rejected") {
+    actions.push({ label: "Reopen", action: "reopen-application", id: application.id });
+  }
+
+  return actions;
+}
+
+function renderApplication(application) {
+  const matric = application.matricNumber ? `Matric: ${application.matricNumber}` : `Reference: ${application.reference}`;
+  return recordCard({
+    title: application.fullName,
+    status: application.status,
+    meta: [
+      matric,
+      application.programme,
+      application.level,
+      `Payment: ${application.paymentStatus || "pending"}`,
+      formatDate(application.createdAt)
+    ],
+    body: `${application.admissionStatus || "Received for admissions screening"}; ${application.qualification || ""}`.trim(),
+    actions: applicationActions(application)
+  });
+}
+
+function renderContact(contact) {
+  return recordCard({
+    title: contact.name,
+    status: contact.status,
+    meta: [contact.email, formatDate(contact.createdAt)],
+    body: contact.message,
+    actions: contact.status === "responded" ? [] : [{ label: "Mark Responded", action: "close-contact", id: contact.id }]
+  });
+}
+
+function renderVerification(verification) {
+  return recordCard({
+    title: verification.certificate,
+    status: verification.status,
+    meta: [formatDate(verification.createdAt)],
+    body: verification.adminNote || "Awaiting administrator review.",
+    actions: verification.status === "reviewed" ? [] : [{ label: "Mark Reviewed", action: "review-verification", id: verification.id }]
+  });
+}
+
+function renderAdminState(state) {
+  const applications = state.applications || [];
+  const contacts = state.contacts || [];
+  const verifications = state.verifications || [];
+  const enrolled = applications.filter((application) => application.status === "enrolled");
+
+  $("[data-total-applications]").textContent = applications.length;
+  $("[data-pending-applications]").textContent = applications.filter((application) => application.status === "pending" || application.status === "screening").length;
+  $("[data-approved-applications]").textContent = applications.filter((application) => application.status === "approved").length;
+  $("[data-enrolled-students]").textContent = enrolled.length;
+
+  renderList(applicationsList, applications, renderApplication, "No applications have been submitted yet.");
+  renderList(enrolledList, enrolled, renderApplication, "No students have been enrolled yet.");
+  renderList(contactsList, contacts, renderContact, "No contact enquiries yet.");
+  renderList(verificationsList, verifications, renderVerification, "No certificate verification requests yet.");
+}
+
+async function loadAdminState() {
+  if (!adminToken) { return; }
+
+  try {
+    const state = await apiRequest("/api/admin/state", { method: "GET", auth: true });
+    adminWorkspace.hidden = false;
+    renderAdminState(state);
+    setResult(adminStatus, "Administrator workspace loaded.");
+  } catch (error) {
+    sessionStorage.removeItem("philotimoCollegeAdminToken");
+    adminToken = "";
+    adminWorkspace.hidden = true;
+    setResult(adminStatus, error.message, "error");
+  }
+}
+
+async function runAdminAction(action, id) {
+  setResult(adminStatus, "Updating record...");
+
+  try {
+    const data = await apiRequest("/api/admin/action", {
+      auth: true,
+      body: { action, id }
+    });
+    renderAdminState(data.state);
+    setResult(adminStatus, data.message);
+  } catch (error) {
+    setResult(adminStatus, error.message, "error");
+  }
+}
+
+function initAdminPortal() {
+  adminLoginForm.addEventListener("submit", async (event) => {
+    event.preventDefault();
+    setResult(adminStatus, "Unlocking administrator workspace...");
+
+    try {
+      const data = await apiRequest("/api/admin/login", { body: getPayload(adminLoginForm) });
+      adminToken = data.token;
+      sessionStorage.setItem("philotimoCollegeAdminToken", adminToken);
+      adminLoginForm.reset();
+      await loadAdminState();
+    } catch (error) {
+      setResult(adminStatus, error.message, "error");
+    }
+  });
+
+  refreshAdminButton.addEventListener("click", loadAdminState);
+  if (adminToken) { loadAdminState(); }
 }
 
 function initFeeEstimator() {
@@ -388,4 +650,5 @@ document.addEventListener("DOMContentLoaded", () => {
   initFeeEstimator();
   initPortalForms();
   initContactForm();
+  initAdminPortal();
 });
