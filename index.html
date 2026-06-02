@@ -39,6 +39,7 @@
         <a href="#departments">Departments</a>
         <a href="#admissions">Admissions</a>
         <a href="#portal">Portal</a>
+        <a href="#admin">Admin</a>
         <a href="#contact">Contact</a>
       </nav>
 
@@ -102,7 +103,7 @@
           </span>
           <span>
             <strong>Student Portal</strong>
-            <small>Demo login, status and verification tools</small>
+            <small>Login, status and verification tools</small>
           </span>
         </a>
         <a class="quick-card" href="#contact">
@@ -203,7 +204,7 @@
         <div class="application-copy">
           <span class="eyebrow">Course Enrollment</span>
           <h2>Apply to PHILOTIMO College.</h2>
-          <p>Fill the form to create a local application reference. This prototype keeps records in the browser so the workflow can be reviewed before connecting to a real backend.</p>
+          <p>Fill the form to create an application reference. Records are saved in the local college backend for administrator review, screening, approval, and enrolment.</p>
           <div class="requirements">
             <strong>General entry guide</strong>
             <p>Five relevant O'Level credits are normally expected, including English Language, Mathematics, Biology, Chemistry, Physics, or other subjects specified by the department.</p>
@@ -345,6 +346,57 @@
             <output data-verify-result></output>
           </form>
         </div>
+
+        <div class="admin-portal" id="admin" aria-labelledby="admin-title">
+          <div class="admin-access">
+            <div>
+              <span class="eyebrow">Administrator Interface</span>
+              <h3 id="admin-title">Admissions, enrolment, enquiries, and verification desk.</h3>
+              <p>Use the administrator code to review submitted applications, approve applicants, enrol students, track payments, and manage enquiries.</p>
+            </div>
+            <form class="admin-access-form" data-admin-login-form>
+              <label>
+                Admin access code
+                <input name="adminCode" type="password" autocomplete="current-password" required>
+              </label>
+              <button class="button button--dark" type="submit">Unlock Admin</button>
+            </form>
+          </div>
+          <output class="form-result admin-status" data-admin-status></output>
+
+          <div class="admin-workspace" data-admin-workspace hidden>
+            <div class="portal-summary" aria-label="College portal summary">
+              <div><strong data-total-applications>0</strong><span>Applications</span></div>
+              <div><strong data-pending-applications>0</strong><span>Pending Review</span></div>
+              <div><strong data-approved-applications>0</strong><span>Approved</span></div>
+              <div><strong data-enrolled-students>0</strong><span>Enrolled Students</span></div>
+            </div>
+
+            <div class="admin-toolbar">
+              <button class="button button--ghost" type="button" data-refresh-admin>Refresh Records</button>
+              <span>Local records are stored on this computer for localhost use.</span>
+            </div>
+
+            <div class="admin-grid">
+              <section class="admin-panel admin-panel--wide" aria-labelledby="applications-title">
+                <h3 id="applications-title">Applications</h3>
+                <div class="record-list" data-applications-list></div>
+              </section>
+              <section class="admin-panel" aria-labelledby="enrolled-title">
+                <h3 id="enrolled-title">Enrolled Students</h3>
+                <div class="record-list" data-enrolled-list></div>
+              </section>
+              <section class="admin-panel" aria-labelledby="enquiries-title">
+                <h3 id="enquiries-title">Contact Enquiries</h3>
+                <div class="record-list" data-contacts-list></div>
+              </section>
+              <section class="admin-panel" aria-labelledby="verifications-title">
+                <h3 id="verifications-title">Verification Requests</h3>
+                <div class="record-list" data-verifications-list></div>
+              </section>
+            </div>
+          </div>
+        </div>
       </div>
     </section>
 
@@ -381,11 +433,11 @@
           </details>
           <details>
             <summary>Does the site support online course enrollment?</summary>
-            <p>Yes. Applicants can pick a course, submit details, and generate a reference number. A backend can later store applications, process payments, and issue admission letters.</p>
+            <p>Yes. Applicants can pick a course, submit details, generate a reference number, and have the application reviewed through the administrator desk.</p>
           </details>
           <details>
             <summary>Can the portal connect to payment and student records?</summary>
-            <p>The front-end is structured for that. Payment gateway, database, administrator dashboard, SMS, and email workflows can be integrated next.</p>
+            <p>The local backend now supports application records, status checks, administrator review, and enrolment. A payment gateway, SMS, and email workflow can be integrated when the live production backend is selected.</p>
           </details>
         </div>
       </div>
