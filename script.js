@@ -311,6 +311,16 @@ function statusLabel(status) {
   return String(status || "pending").replace(/-/g, " ");
 }
 
+function emailStatusText(email) {
+  if (!email) { return ""; }
+  const to = email.to ? ` to ${email.to}` : "";
+  if (email.status === "sent") { return ` Email sent${to}.`; }
+  if (email.status === "not-configured") { return ` Email notice saved${to}; SMTP is not configured yet.`; }
+  if (email.status === "failed") { return ` Email notice saved${to}, but sending failed: ${email.error}`; }
+  if (email.status === "skipped") { return ` Email not sent: ${email.error}`; }
+  return ` Email status: ${email.status || "queued"}.`;
+}
+
 function updateFees() {
   const cluster = $("[data-fee-cluster]").value;
   const level = $("[data-fee-level]").value;
@@ -612,7 +622,7 @@ async function runAdminAction(action, id) {
       body: { action, id }
     });
     renderAdminState(data.state);
-    setResult(adminStatus, data.message);
+    setResult(adminStatus, `${data.message}${emailStatusText(data.email)}`);
   } catch (error) {
     setResult(adminStatus, error.message, "error");
   }
