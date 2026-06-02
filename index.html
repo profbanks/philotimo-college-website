@@ -39,7 +39,6 @@
         <a href="#departments">Departments</a>
         <a href="#admissions">Admissions</a>
         <a href="#portal">Portal</a>
-        <a href="#admin">Admin</a>
         <a href="#contact">Contact</a>
       </nav>
 
@@ -204,7 +203,7 @@
         <div class="application-copy">
           <span class="eyebrow">Course Enrollment</span>
           <h2>Apply to PHILOTIMO College.</h2>
-          <p>Fill the form to create an application reference. Records are saved in the local college backend for administrator review, screening, approval, and enrolment.</p>
+          <p>Fill the form to create an application reference. Records are saved in the local college backend for admissions office review, screening, approval, and enrolment.</p>
           <div class="requirements">
             <strong>General entry guide</strong>
             <p>Five relevant O'Level credits are normally expected, including English Language, Mathematics, Biology, Chemistry, Physics, or other subjects specified by the department.</p>
@@ -347,7 +346,7 @@
           </form>
         </div>
 
-        <div class="admin-portal" id="admin" aria-labelledby="admin-title">
+        <div class="admin-portal" id="admin" data-admin-portal aria-labelledby="admin-title" hidden>
           <div class="admin-access">
             <div>
               <span class="eyebrow">Administrator Interface</span>
@@ -433,11 +432,11 @@
           </details>
           <details>
             <summary>Does the site support online course enrollment?</summary>
-            <p>Yes. Applicants can pick a course, submit details, generate a reference number, and have the application reviewed through the administrator desk.</p>
+            <p>Yes. Applicants can pick a course, submit details, generate a reference number, and have the application reviewed through the admissions office workflow.</p>
           </details>
           <details>
             <summary>Can the portal connect to payment and student records?</summary>
-            <p>The local backend now supports application records, status checks, administrator review, and enrolment. A payment gateway, SMS, and email workflow can be integrated when the live production backend is selected.</p>
+            <p>The local backend now supports application records, status checks, internal review, and enrolment. A payment gateway, SMS, and email workflow can be integrated when the live production backend is selected.</p>
           </details>
         </div>
       </div>
@@ -545,6 +544,6 @@
     </article>
   </template>
 
-  <script src="script.js"></script>
+  <script src="script.js?v=admin-private"></script>
 </body>
 </html>
