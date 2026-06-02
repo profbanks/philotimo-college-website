@@ -22,6 +22,12 @@ Then open:
 http://localhost:4181/
 ```
 
+The public page does not show the administrator panel. To access the college admin desk, open:
+
+```text
+http://localhost:4181/?admin=1#admin
+```
+
 ## GitHub
 
 The college website repository is:
