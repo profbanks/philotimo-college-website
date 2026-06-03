@@ -193,6 +193,347 @@ const programmes = [
   }
 ];
 
+const semesterLabels = {
+  "nd1-1": "ND I - First Semester",
+  "nd1-2": "ND I - Second Semester",
+  "nd2-1": "ND II - First Semester",
+  "nd2-2": "ND II - Second Semester"
+};
+
+const makeCourse = (code, title, unit = 2) => ({ code, title, unit });
+
+const exactCourseCatalog = {
+  "Public Health Technology": {
+    "nd1-1": [
+      makeCourse("PHT 111", "Introduction to Public Health", 3),
+      makeCourse("MTH 101", "General Mathematics", 3),
+      makeCourse("STA 101", "Introduction to Statistics", 2),
+      makeCourse("GNS 230", "General Biology", 2),
+      makeCourse("GST 101", "Use of English", 2),
+      makeCourse("PHS 111", "Introduction to Pharmacology and Therapeutics", 2),
+      makeCourse("COM 111", "Introduction to Computer Science", 3),
+      makeCourse("PHT 112", "Immunology and Immunization", 3),
+      makeCourse("GLT 111", "General Laboratory Technique", 3),
+      makeCourse("DTH 115", "Introduction to Anatomy and Physiology", 3),
+      makeCourse("GNS 127", "Citizenship Education", 2)
+    ],
+    "nd1-2": [
+      makeCourse("GNS 213", "Introduction to Medical Sociology", 2),
+      makeCourse("PHT 121", "Introduction to Health Education and Promotion", 3),
+      makeCourse("GNS 112", "Introduction to General Chemistry", 3),
+      makeCourse("PHT 122", "Introduction to Biostatistics", 3),
+      makeCourse("EHT 125", "Public Health Nutrition", 3),
+      makeCourse("PHT 124", "Substance Use and Abuse", 2),
+      makeCourse("EHT 111", "Introduction to Environmental Health", 3),
+      makeCourse("PHT 126", "Introduction to Demography", 2),
+      makeCourse("CHO 136", "Introduction to Mental Health", 2),
+      makeCourse("EHT 212", "Introduction to Epidemiology", 2),
+      makeCourse("EED 126", "Introduction to Entrepreneurship Education", 2)
+    ],
+    "nd2-1": [
+      makeCourse("PHT 201", "Introduction to Community Health", 2),
+      makeCourse("PHT 211", "Introduction to Communicable and Non-Communicable Disease", 3),
+      makeCourse("PHT 212", "Primary Health Care", 3),
+      makeCourse("GNS 218", "Research Methodology", 2),
+      makeCourse("PHT 213", "Introduction to Emergency Response", 2),
+      makeCourse("PHT 214", "Maternal and Child Health", 3),
+      makeCourse("STB 211", "Introduction to Microbiology and Parasitology", 3),
+      makeCourse("PHT 216", "Seminar in Public Health", 2),
+      makeCourse("EED 216", "Practice of Entrepreneurship", 2)
+    ],
+    "nd2-2": [
+      makeCourse("PHT 221", "Public Health Planning and Management", 3),
+      makeCourse("PHT 222", "First Aid", 3),
+      makeCourse("EHT 211", "Introduction to Public Health Pest Management", 3),
+      makeCourse("EHT 223", "Public/Environmental Health Laws", 3),
+      makeCourse("PHT 225", "Global and Contemporary Health Issues", 2),
+      makeCourse("EHT 315", "Health Economics", 2),
+      makeCourse("PHT 227", "Project", 6),
+      makeCourse("SIWES", "Supervised Industrial Work Experience Scheme", 0)
+    ]
+  },
+  "Pharmacy Technician": {
+    "nd1-1": [
+      makeCourse("GNS 101", "Use of English I", 2),
+      makeCourse("COM 101", "Introduction to Computing", 3),
+      makeCourse("GNS 111", "Citizenship Education I", 2),
+      makeCourse("STB 101", "General Biology", 5),
+      makeCourse("STC 101", "General Chemistry", 5),
+      makeCourse("STP 101", "General Physics", 5),
+      makeCourse("MTH 111", "General Mathematics", 3),
+      makeCourse("MSQ 111", "Mandatory Skills Qualification", 2),
+      makeCourse("PTP 111", "Principles of Pharmacy Technician Practice I", 3),
+      makeCourse("PTP 112", "Basic Dispensing Theory I", 3),
+      makeCourse("PTP 113", "Introduction to Laboratory Techniques", 3)
+    ],
+    "nd1-2": [
+      makeCourse("GNS 102", "Communication in English I", 2),
+      makeCourse("GNS 121", "Citizenship Education II", 2),
+      makeCourse("ENT 128", "Introduction to Entrepreneurship I", 3),
+      makeCourse("STA 111", "Descriptive Statistics I", 2),
+      makeCourse("PTP 121", "Anatomy and Physiology I", 4),
+      makeCourse("PTP 122", "Basic Dispensing Theory II", 3),
+      makeCourse("PTP 123", "Basic Dispensing Practical I", 3),
+      makeCourse("PTP 124", "Pharmaceutical Calculations", 3),
+      makeCourse("PTP 125", "Basic Microbiology I", 4),
+      makeCourse("PTP 126", "Action and Uses of Medicines I", 3),
+      makeCourse("PTP 127", "Primary Health Care I", 4),
+      makeCourse("PTP 128", "SIWES", 4)
+    ],
+    "nd2-1": [
+      makeCourse("ENT 126", "Introduction to Entrepreneurship II", 3),
+      makeCourse("GNS 411", "Introduction to Psychology", 2),
+      makeCourse("PTP 211", "Action and Uses of Medicines II", 4),
+      makeCourse("PTP 212", "Basic Dispensing Theory III", 3),
+      makeCourse("PTP 213", "Basic Dispensing Practical II", 3),
+      makeCourse("PTP 214", "Anatomy and Physiology II", 4),
+      makeCourse("PTP 215", "Logistics and Supply Chain Management System", 3),
+      makeCourse("PTP 216", "Basic Microbiology II", 4),
+      makeCourse("PTP 217", "Primary Health Care II", 4),
+      makeCourse("PTP 218", "Research Methodology", 2)
+    ],
+    "nd2-2": [
+      makeCourse("PTP 221", "Basic Dispensing Theory IV", 3),
+      makeCourse("PTP 222", "Basic Dispensing Practical III", 3),
+      makeCourse("PTP 223", "Computer Applications in Pharmacy", 3),
+      makeCourse("PTP 224", "Anatomy and Physiology III", 4),
+      makeCourse("PTP 225", "Principles of Pharmaceutical Technician Practice II", 2),
+      makeCourse("PTP 226", "Action and Uses of Medicines III", 3),
+      makeCourse("PTP 227", "Project", 4)
+    ]
+  },
+  "Dental Technology": {
+    "nd1-1": [
+      makeCourse("STB 112", "Morphology and Physiology of Living Things", 3),
+      makeCourse("STC 111", "General Principles of Chemistry", 3),
+      makeCourse("STP 111", "Mechanics and Properties of Matter and Heat Energy", 3),
+      makeCourse("STA 111", "Introduction to Statistics", 2),
+      makeCourse("MTH 111", "Logic and Linear Algebra", 2),
+      makeCourse("DTE 111", "Introduction to Dental Technology", 2),
+      makeCourse("CHO 112", "Primary Health Care", 1),
+      makeCourse("GNS 111", "Citizenship Education I", 2),
+      makeCourse("COM 111", "Introduction to Computer Science", 2),
+      makeCourse("DTE 112", "Tooth Morphology", 2),
+      makeCourse("DTE 114", "Human Anatomy and Physiology I", 3),
+      makeCourse("DTE 113", "Dental Material Science I", 1)
+    ],
+    "nd1-2": [
+      makeCourse("PTD 111", "Technical Drawing", 1),
+      makeCourse("EED 126", "Entrepreneurship Studies", 3),
+      makeCourse("GNS 102", "Communication in English", 2),
+      makeCourse("DTE 121", "Dental Prosthesis I", 3),
+      makeCourse("DTE 122", "Dental Materials Science II", 2),
+      makeCourse("DTE 123", "Introduction to Orthodontics Technology I", 2),
+      makeCourse("GNS 124", "Medical Sociology", 2),
+      makeCourse("DTE 124", "Human Anatomy and Physiology II", 3)
+    ],
+    "nd2-1": [
+      makeCourse("DTE 224", "Dental Prosthodontics", 3),
+      makeCourse("GNS 228", "Research Methodology", 1),
+      makeCourse("EED 216", "Practice of Entrepreneurship", 2),
+      makeCourse("DTE 213", "Dental Material Science III", 2),
+      makeCourse("DTE 211", "Oral Physiology, Histology and Embryology", 1),
+      makeCourse("DTE 212", "Dental Anatomy and Physiology I", 2),
+      makeCourse("DTS 211", "Pharmacology I", 2),
+      makeCourse("DTS 212", "Clinical Oral Hygiene", 2),
+      makeCourse("HIM 111", "Health Information System I", 2),
+      makeCourse("DTE 214", "Human Anatomy and Physiology III", 2),
+      makeCourse("DTE 215", "Oral Pathology", 2),
+      makeCourse("DTE 216", "General Pathology", 2)
+    ],
+    "nd2-2": [
+      makeCourse("DTE 226", "Human Anatomy and Physiology II", 4),
+      makeCourse("DTE 228", "Project/Seminar Writing", 6),
+      makeCourse("DTE 225", "Dental Prosthodontics III", 3),
+      makeCourse("DTE 224B", "Introduction to Orthodontics", 2),
+      makeCourse("DTE 222", "Complete Dentures", 3),
+      makeCourse("DTE 223", "Science of Dental Technology", 3),
+      makeCourse("DTE 227", "SIWES Report Writing", 3)
+    ]
+  },
+  "Dental Therapy": {
+    "nd1-1": [
+      makeCourse("STB 112", "Morphology and Physiology of Living Things", 2),
+      makeCourse("BCH 111", "General Chemistry", 2),
+      makeCourse("BPH 111", "Mechanics and Properties of Matter", 2),
+      makeCourse("STA 111", "Introduction to Statistics", 2),
+      makeCourse("CHM 111", "Primary Health Care", 2),
+      makeCourse("PCT 111", "Introduction to Pharmacology", 3),
+      makeCourse("GNS 101", "Use of English I", 2),
+      makeCourse("GNS 111", "Citizenship Education I", 2),
+      makeCourse("MSQ", "Mandatory Skills Qualification", 2),
+      makeCourse("COM 111", "Introduction to Computing", 3),
+      makeCourse("DTH 111", "Tooth Morphology and Tooth Carving I", 2),
+      makeCourse("DTH 112", "Human Anatomy and Physiology I", 2),
+      makeCourse("DTH 113", "Foundation of Dental Therapy", 2)
+    ],
+    "nd1-2": [
+      makeCourse("GLT 111", "General Laboratory Techniques", 2),
+      makeCourse("PTD 111", "Technical Drawing", 3),
+      makeCourse("ENT 126", "Introduction to Entrepreneurship I", 3),
+      makeCourse("GNS 121", "Citizenship Education II", 2),
+      makeCourse("MSQ", "Mandatory Skills Qualification", 2),
+      makeCourse("DTH 121", "Dental Therapy Instrumentation", 2),
+      makeCourse("DTH 122", "Oral Physiology", 2),
+      makeCourse("DTH 123", "Care and Maintenance of Dental Equipment", 2),
+      makeCourse("DTH 124", "General Pathology I", 2),
+      makeCourse("DTH 125", "Human Anatomy and Physiology II", 2),
+      makeCourse("DTH 126", "Tooth Morphology and Tooth Carving II", 2),
+      makeCourse("DTH 127", "Oral Hygiene", 3),
+      makeCourse("SIWES", "Supervised Industrial Work Experience Scheme", 0)
+    ],
+    "nd2-1": [
+      makeCourse("GNS 213", "Medical Sociology", 2),
+      makeCourse("GNS 202", "Use of English II", 2),
+      makeCourse("ENT 216", "Introduction to Entrepreneurship II", 2),
+      makeCourse("DTH 211", "Oral Anatomy", 2),
+      makeCourse("DTH 212", "Phantom Head", 3),
+      makeCourse("DTH 213", "Oral Health Education", 2),
+      makeCourse("DTH 214", "General Pathology II", 2),
+      makeCourse("DTH 215", "Dental Instrumentation I", 2),
+      makeCourse("DTH 216", "Dental Radiography I", 2),
+      makeCourse("DTH 217", "Research Methodology in Dental Therapy", 2)
+    ],
+    "nd2-2": [
+      makeCourse("STB 211", "Introductory Microbiology", 3),
+      makeCourse("NUD 122", "Human Nutrition and Dietetics", 2),
+      makeCourse("DTH 221", "First Aid and Dental Emergencies", 2),
+      makeCourse("DTH 222", "Anatomy of Head and Neck", 2),
+      makeCourse("DTH 223", "Principles of Sterilization", 2),
+      makeCourse("DTH 224", "Dental Materials", 3),
+      makeCourse("DTH 225", "Introduction to Clinical Practice", 2),
+      makeCourse("DTH 226", "Project", 2)
+    ]
+  },
+  "Dental Surgery Technology": {
+    "nd1-1": [
+      makeCourse("DST 111", "Foundation of Dental Surgery Technology", 3),
+      makeCourse("DST 112", "Human Biology and Embryology", 3),
+      makeCourse("DST 113", "Applied Physics", 2),
+      makeCourse("DST 114", "Chemistry", 2),
+      makeCourse("DST 115", "Medical Sociology", 2),
+      makeCourse("DST 116", "Oral Health Science I", 2),
+      makeCourse("DST 117", "Oral Anatomy and Oral Physiology", 3),
+      makeCourse("DST 118", "Dental Instrumentation I", 3),
+      makeCourse("GNS 101", "Use of English", 2),
+      makeCourse("GNS 111", "Citizenship Education", 2),
+      makeCourse("COM 101", "Introduction to Computer", 3)
+    ],
+    "nd1-2": [
+      makeCourse("DST 121", "Human Biology II", 3),
+      makeCourse("DST 122", "Foundation of DST II", 3),
+      makeCourse("DST 123", "Nutrition and Health", 2),
+      makeCourse("DST 124", "Introduction to Pharmacology", 2),
+      makeCourse("GNS 125", "Behavioral Science II", 2),
+      makeCourse("DST 126", "General Pathology", 3),
+      makeCourse("DST 127", "Dental Instrumentation II", 3),
+      makeCourse("STM 115", "Introduction to Microbiology", 3),
+      makeCourse("DST 128", "Dental Health Care Practice I", 4),
+      makeCourse("GNS 102", "Communication in English I", 2)
+    ],
+    "nd2-1": [
+      makeCourse("DST 211", "Pharmacology II", 2),
+      makeCourse("DST 212", "Radiography I", 3),
+      makeCourse("DST 213", "Primary Health Care", 3),
+      makeCourse("DST 214", "Dental Instrumentation III", 3),
+      makeCourse("DST 215", "Sterilization and Infection Control", 2),
+      makeCourse("GNS 213", "Introduction to Psychology", 2),
+      makeCourse("DST 216", "Oral Health Education", 3),
+      makeCourse("DST 227", "Research Methods", 2),
+      makeCourse("DST 228", "Oral and Maxillofacial Surgery", 3),
+      makeCourse("GNS 202", "Communication in English II", 2),
+      makeCourse("EED 216", "Entrepreneurship Studies", 2)
+    ],
+    "nd2-2": [
+      makeCourse("DST 221", "First Aid and Dental Emergencies", 3),
+      makeCourse("DST 222", "Dental Materials and Bioscience I", 4),
+      makeCourse("DST 223", "Pre and Post Operative Dental Care", 3),
+      makeCourse("DST 224", "Radiography II", 3),
+      makeCourse("DST 225", "Clinical Diseases and Diet Therapy I", 2),
+      makeCourse("DST 226", "Oral Healthcare and Patient Records", 3),
+      makeCourse("DST 227B", "Project", 3),
+      makeCourse("DST 228B", "Restorative Dentistry I", 3),
+      makeCourse("DST 229", "Oral Pathology and Oral Medicine", 3)
+    ]
+  }
+};
+
+const focusByProgramme = {
+  "Community Health": ["Primary Health Care", "Community Diagnosis", "Maternal and Child Health", "Disease Prevention"],
+  "Family Healthcare Technology": ["Family Health Records", "Home and Community Care", "Health Counselling", "Preventive Care"],
+  "Environmental Health Technology": ["Environmental Sanitation", "Waste Management", "Water Quality Control", "Public Health Inspection"],
+  "Health Education and Promotion": ["Health Communication", "Behaviour Change Communication", "Campaign Planning", "Monitoring and Evaluation"],
+  "Epidemiology and Disease Control Technology": ["Disease Surveillance", "Outbreak Investigation", "Immunisation Support", "Epidemiological Reporting"],
+  "Medical Laboratory Technology": ["General Laboratory Techniques", "Haematology Support", "Clinical Chemistry Basics", "Laboratory Quality Control"],
+  "Medical Imaging Technology": ["Imaging Physics", "Patient Positioning", "Radiation Protection", "Imaging Equipment Care"],
+  "Health Information Management": ["Health Records Management", "Health Statistics", "Medical Coding", "Electronic Health Information Systems"],
+  "Paramedics Technology": ["Emergency Response", "Basic Life Support", "Trauma Care Support", "Ambulance Operations"],
+  "Dispensing Opticianry": ["Optical Dispensing", "Ophthalmic Lenses", "Frame Fitting", "Eye-care Service Practice"],
+  "Pharmaceutical Technology": ["Pharmaceutical Production", "Formulation Basics", "Quality Assurance", "Industrial Pharmacy Operations"],
+  "Medical Store Management Technology": ["Medical Inventory Systems", "Procurement and Supply", "Cold Chain Management", "Stock Documentation"],
+  "Computer Science": ["Computer Programming", "Database Systems", "Web Development", "Systems Analysis"],
+  "Computer Engineering Technology": ["Digital Electronics", "Computer Hardware", "Computer Networks", "Embedded Systems"],
+  "Software and Web Development": ["Frontend Development", "Backend Systems", "API Design", "Application Deployment"],
+  "Artificial Intelligence": ["Data Preparation", "Machine Learning Basics", "Automation", "Responsible AI"],
+  "Cybersecurity Engineering": ["Network Security", "Security Operations", "Threat Monitoring", "Incident Response"],
+  "Data Science": ["Data Cleaning", "Data Analysis", "Dashboards", "Practical Reporting"],
+  "Digital Content Creation": ["Graphics Production", "Video Editing", "Digital Publishing", "Content Strategy"]
+};
+
+function programmePrefix(title) {
+  return title
+    .split(/\s+/)
+    .filter((word) => !["and", "of", "in"].includes(word.toLowerCase()))
+    .map((word) => word[0])
+    .join("")
+    .slice(0, 3)
+    .toUpperCase() || "PHI";
+}
+
+function fallbackCatalog(programme) {
+  const prefix = programmePrefix(programme.title);
+  const focus = focusByProgramme[programme.title] || programme.highlights;
+  return {
+    "nd1-1": [
+      makeCourse("GNS 101", "Use of English I", 2),
+      makeCourse("GNS 111", "Citizenship Education I", 2),
+      makeCourse("COM 101", "Introduction to Computing", 3),
+      makeCourse("MTH 111", "General Mathematics", 3),
+      makeCourse(`${prefix} 111`, `Introduction to ${programme.title}`, 3),
+      makeCourse(`${prefix} 112`, focus[0] || "Professional Practice I", 2),
+      makeCourse(`${prefix} 113`, "Laboratory, Studio, or Field Practice I", 2)
+    ],
+    "nd1-2": [
+      makeCourse("GNS 102", "Communication in English", 2),
+      makeCourse("ENT 126", "Introduction to Entrepreneurship I", 2),
+      makeCourse("STA 111", "Introduction to Statistics", 2),
+      makeCourse(`${prefix} 121`, focus[1] || "Professional Practice II", 3),
+      makeCourse(`${prefix} 122`, "Applied Science and Safety", 2),
+      makeCourse(`${prefix} 123`, "Practical Skills Workshop II", 3),
+      makeCourse("SIWES", "Supervised Industrial Work Experience Scheme", 0)
+    ],
+    "nd2-1": [
+      makeCourse("GNS 213", "Medical Sociology / Professional Communication", 2),
+      makeCourse("ENT 216", "Practice of Entrepreneurship", 2),
+      makeCourse("GNS 218", "Research Methodology", 2),
+      makeCourse(`${prefix} 211`, focus[2] || "Departmental Operations I", 3),
+      makeCourse(`${prefix} 212`, "Professional Ethics and Regulation", 2),
+      makeCourse(`${prefix} 213`, "Advanced Practical Skills I", 3)
+    ],
+    "nd2-2": [
+      makeCourse(`${prefix} 221`, focus[3] || "Departmental Operations II", 3),
+      makeCourse(`${prefix} 222`, "Management and Quality Assurance", 2),
+      makeCourse(`${prefix} 223`, "Contemporary Issues in Practice", 2),
+      makeCourse(`${prefix} 224`, "Seminar", 2),
+      makeCourse(`${prefix} 225`, "Project", 4)
+    ]
+  };
+}
+
+const courseCatalog = Object.fromEntries(
+  programmes.map((programme) => [programme.title, exactCourseCatalog[programme.title] || fallbackCatalog(programme)])
+);
+
 const feeTable = {
   health: { nd: 185000, hnd: 215000, certificate: 95000 },
   dental: { nd: 225000, hnd: 255000, certificate: 120000 },
@@ -222,10 +563,20 @@ const applicationsList = $("[data-applications-list]");
 const enrolledList = $("[data-enrolled-list]");
 const contactsList = $("[data-contacts-list]");
 const verificationsList = $("[data-verifications-list]");
+const pinRequestsList = $("[data-pin-requests-list]");
+const courseRegistrationsList = $("[data-course-registrations-list]");
 const refreshAdminButton = $("[data-refresh-admin]");
+const pinRequestForm = $("[data-pin-request-form]");
+const courseRegistrationForm = $("[data-course-registration-form]");
+const pinProgrammeSelect = $("[data-pin-programme-select]");
+const registrationProgrammeSelect = $("[data-registration-programme-select]");
+const registrationSemesterSelect = $("[data-registration-semester]");
+const coursePicker = $("[data-course-picker]");
+const courseTotal = $("[data-course-total]");
 let activeFilter = "all";
 const isAdminView = new URLSearchParams(window.location.search).get("admin") === "1";
 let adminToken = isAdminView ? sessionStorage.getItem("philotimoCollegeAdminToken") || "" : "";
+const MAX_PAYMENT_PROOF_SIZE = 1.5 * 1024 * 1024;
 
 function renderProgrammes() {
   const query = searchInput.value.trim().toLowerCase();
@@ -262,17 +613,112 @@ function renderProgrammes() {
   emptyState.hidden = visibleProgrammes.length > 0;
 }
 
-function populateProgrammeSelect() {
+function populateProgrammeOptions(select) {
+  if (!select) { return; }
   programmes.forEach((programme) => {
     const option = document.createElement("option");
     option.value = programme.title;
     option.textContent = `${programme.title} (${programme.level})`;
-    programmeSelect.append(option);
+    select.append(option);
   });
+}
+
+function populateProgrammeSelect() {
+  [programmeSelect, pinProgrammeSelect, registrationProgrammeSelect].forEach(populateProgrammeOptions);
 }
 
 function getPayload(form) {
   return Object.fromEntries(new FormData(form).entries());
+}
+
+function setFormBusy(form, busy) {
+  $$("button, input, select, textarea", form).forEach((control) => {
+    control.disabled = busy;
+  });
+}
+
+function readPaymentProof(file) {
+  return new Promise((resolve, reject) => {
+    if (!file) {
+      reject(new Error("Please upload proof of payment."));
+      return;
+    }
+
+    if (file.size > MAX_PAYMENT_PROOF_SIZE) {
+      reject(new Error("The proof of payment is too large. Please upload a file that is 1.5 MB or smaller."));
+      return;
+    }
+
+    const reader = new FileReader();
+    reader.addEventListener("load", () => {
+      resolve({
+        proofFileName: file.name,
+        proofFileType: file.type || "application/octet-stream",
+        proofFileSize: file.size,
+        proofDataUrl: reader.result
+      });
+    });
+    reader.addEventListener("error", () => reject(new Error("The proof of payment could not be read.")));
+    reader.readAsDataURL(file);
+  });
+}
+
+function getSemesterCourses(programme, semester) {
+  return courseCatalog[programme]?.[semester] || [];
+}
+
+function updateCourseSummary() {
+  if (!coursePicker || !courseTotal) { return; }
+  const checkedCodes = new Set($$("[data-course-checkbox]:checked", coursePicker).map((input) => input.value));
+  const programme = registrationProgrammeSelect?.value || "";
+  const semester = registrationSemesterSelect?.value || "";
+  const selected = getSemesterCourses(programme, semester).filter((course) => checkedCodes.has(course.code));
+  const totalUnits = selected.reduce((sum, course) => sum + Number(course.unit || 0), 0);
+  courseTotal.textContent = selected.length
+    ? `${selected.length} course${selected.length === 1 ? "" : "s"} selected, ${totalUnits} total unit${totalUnits === 1 ? "" : "s"}.`
+    : "0 courses selected.";
+}
+
+function renderCoursePicker() {
+  if (!coursePicker) { return; }
+  const programme = registrationProgrammeSelect?.value || "";
+  const semester = registrationSemesterSelect?.value || "";
+  const courses = getSemesterCourses(programme, semester);
+  coursePicker.innerHTML = "";
+
+  if (!programme || !semester) {
+    const message = document.createElement("p");
+    message.textContent = "Select a department and semester to load the NBTE-aligned courses.";
+    coursePicker.append(message);
+    updateCourseSummary();
+    return;
+  }
+
+  if (!courses.length) {
+    const message = document.createElement("p");
+    message.textContent = "No course list has been configured for this department and semester yet.";
+    coursePicker.append(message);
+    updateCourseSummary();
+    return;
+  }
+
+  const heading = document.createElement("div");
+  heading.className = "course-picker__heading";
+  heading.innerHTML = `<strong>${programme}</strong><span>${semesterLabels[semester]}</span>`;
+  coursePicker.append(heading);
+
+  courses.forEach((course) => {
+    const label = document.createElement("label");
+    label.className = "course-option";
+    label.innerHTML = `
+      <input type="checkbox" value="${course.code}" data-course-checkbox checked>
+      <span><strong>${course.code}</strong> ${course.title}</span>
+      <em>${course.unit} unit${Number(course.unit) === 1 ? "" : "s"}</em>
+    `;
+    coursePicker.append(label);
+  });
+
+  updateCourseSummary();
 }
 
 async function apiRequest(path, options = {}) {
@@ -431,6 +877,87 @@ function initPortalForms() {
   });
 }
 
+function initCourseRegistration() {
+  if (!pinRequestForm || !courseRegistrationForm) { return; }
+
+  [registrationProgrammeSelect, registrationSemesterSelect].forEach((control) => {
+    control?.addEventListener("change", renderCoursePicker);
+  });
+  coursePicker?.addEventListener("change", updateCourseSummary);
+  renderCoursePicker();
+
+  pinRequestForm.addEventListener("submit", async (event) => {
+    event.preventDefault();
+    const output = $("[data-pin-request-result]");
+    const data = new FormData(pinRequestForm);
+    setResult(output, "Reading proof of payment...");
+
+    try {
+      setFormBusy(pinRequestForm, true);
+      const file = data.get("paymentProof");
+      const proof = await readPaymentProof(file instanceof File ? file : null);
+      const payload = {
+        fullName: data.get("fullName").toString().trim(),
+        studentId: data.get("studentId").toString().trim(),
+        email: data.get("email").toString().trim(),
+        phone: data.get("phone").toString().trim(),
+        programme: data.get("programme").toString(),
+        semester: data.get("semester").toString(),
+        amountPaid: data.get("amountPaid").toString().trim(),
+        paymentReference: data.get("paymentReference").toString().trim(),
+        paymentDate: data.get("paymentDate").toString().trim(),
+        ...proof
+      };
+      const response = await apiRequest("/api/biodata-pin-requests", { body: payload });
+      setResult(output, response.message);
+      pinRequestForm.reset();
+      if (adminToken) { loadAdminState(); }
+    } catch (error) {
+      setResult(output, error.message, "error");
+    } finally {
+      setFormBusy(pinRequestForm, false);
+    }
+  });
+
+  courseRegistrationForm.addEventListener("submit", async (event) => {
+    event.preventDefault();
+    const output = $("[data-course-registration-result]");
+    const data = new FormData(courseRegistrationForm);
+    const programme = data.get("programme").toString();
+    const semester = data.get("semester").toString();
+    const checkedCodes = new Set($$("[data-course-checkbox]:checked", coursePicker).map((input) => input.value));
+    const selectedCourses = getSemesterCourses(programme, semester).filter((course) => checkedCodes.has(course.code));
+
+    if (!selectedCourses.length) {
+      setResult(output, "Please select at least one course before registering.", "error");
+      return;
+    }
+
+    setResult(output, "Submitting course registration...");
+    try {
+      setFormBusy(courseRegistrationForm, true);
+      const response = await apiRequest("/api/course-registrations", {
+        body: {
+          pin: data.get("pin").toString().trim(),
+          studentId: data.get("studentId").toString().trim(),
+          email: data.get("email").toString().trim(),
+          programme,
+          semester,
+          courses: selectedCourses
+        }
+      });
+      setResult(output, `${response.message} Registration reference: ${response.record.registrationReference}.`);
+      courseRegistrationForm.reset();
+      renderCoursePicker();
+      if (adminToken) { loadAdminState(); }
+    } catch (error) {
+      setResult(output, error.message, "error");
+    } finally {
+      setFormBusy(courseRegistrationForm, false);
+    }
+  });
+}
+
 function initContactForm() {
   $("[data-contact-form]").addEventListener("submit", async (event) => {
     event.preventDefault();
@@ -486,7 +1013,19 @@ function recordCard({ title, status, meta = [], body = "", actions = [] }) {
   if (actions.length) {
     const actionWrap = document.createElement("div");
     actionWrap.className = "record-actions";
-    actions.forEach(({ label, action, id }) => {
+    actions.forEach(({ label, action, id, href, download }) => {
+      if (href) {
+        const link = document.createElement("a");
+        link.className = "button button--ghost";
+        link.href = href;
+        link.target = "_blank";
+        link.rel = "noopener";
+        if (download) { link.download = download; }
+        link.textContent = label;
+        actionWrap.append(link);
+        return;
+      }
+
       const button = document.createElement("button");
       button.className = "button button--ghost";
       button.type = "button";
@@ -579,21 +1118,103 @@ function renderVerification(verification) {
   });
 }
 
+function pinRequestActions(request) {
+  const actions = [];
+  if (request.proofDataUrl) {
+    actions.push({
+      label: "View Proof",
+      href: request.proofDataUrl,
+      download: request.proofFileName || "e-biodata-payment-proof"
+    });
+  }
+
+  if (request.status === "pending") {
+    actions.push({ label: "Verify and Issue PIN", action: "issue-biodata-pin", id: request.id });
+    actions.push({ label: "Reject Payment", action: "reject-biodata-pin", id: request.id });
+  } else {
+    actions.push({ label: "Move To Pending", action: "reopen-biodata-pin", id: request.id });
+  }
+  return actions;
+}
+
+function renderPinRequest(request) {
+  const pinLine = request.pin ? `PIN: ${request.pin}` : "PIN not issued";
+  return recordCard({
+    title: request.fullName,
+    status: request.status,
+    meta: [
+      request.studentId,
+      request.programme,
+      semesterLabels[request.semester] || request.semester,
+      `Payment ref: ${request.paymentReference}`,
+      `Amount: ${formatNaira(Number(request.amountPaid || 0))}`,
+      pinLine,
+      formatDate(request.createdAt)
+    ],
+    body: `Email: ${request.email}; Phone: ${request.phone}`,
+    actions: pinRequestActions(request)
+  });
+}
+
+function courseRegistrationActions(registration) {
+  if (registration.status === "approved") {
+    return [{ label: "Reopen", action: "reopen-course-registration", id: registration.id }];
+  }
+  if (registration.status === "rejected") {
+    return [{ label: "Reopen", action: "reopen-course-registration", id: registration.id }];
+  }
+  return [
+    { label: "Approve Registration", action: "approve-course-registration", id: registration.id },
+    { label: "Reject Registration", action: "reject-course-registration", id: registration.id }
+  ];
+}
+
+function renderCourseRegistration(registration) {
+  const courses = Array.isArray(registration.courses) ? registration.courses : [];
+  const units = courses.reduce((sum, course) => sum + Number(course.unit || 0), 0);
+  const courseText = courses
+    .map((course) => `${course.code} ${course.title}`)
+    .slice(0, 10)
+    .join("; ");
+  return recordCard({
+    title: registration.fullName || registration.studentId,
+    status: registration.status,
+    meta: [
+      registration.registrationReference,
+      registration.studentId,
+      registration.programme,
+      semesterLabels[registration.semester] || registration.semester,
+      `${courses.length} courses`,
+      `${units} units`,
+      formatDate(registration.createdAt)
+    ],
+    body: courseText || "No course list attached.",
+    actions: courseRegistrationActions(registration)
+  });
+}
+
 function renderAdminState(state) {
   const applications = state.applications || [];
   const contacts = state.contacts || [];
   const verifications = state.verifications || [];
+  const pinRequests = state.pinRequests || [];
+  const courseRegistrations = state.courseRegistrations || [];
   const enrolled = applications.filter((application) => application.status === "enrolled");
 
   $("[data-total-applications]").textContent = applications.length;
   $("[data-pending-applications]").textContent = applications.filter((application) => application.status === "pending" || application.status === "screening").length;
   $("[data-approved-applications]").textContent = applications.filter((application) => application.status === "approved").length;
   $("[data-enrolled-students]").textContent = enrolled.length;
+  $("[data-pin-requests]").textContent = pinRequests.filter((request) => request.status === "pending").length;
+  $("[data-issued-pins]").textContent = pinRequests.filter((request) => request.status === "issued").length;
+  $("[data-course-registrations]").textContent = courseRegistrations.length;
 
   renderList(applicationsList, applications, renderApplication, "No applications have been submitted yet.");
   renderList(enrolledList, enrolled, renderApplication, "No students have been enrolled yet.");
   renderList(contactsList, contacts, renderContact, "No contact enquiries yet.");
   renderList(verificationsList, verifications, renderVerification, "No certificate verification requests yet.");
+  renderList(pinRequestsList, pinRequests, renderPinRequest, "No e-biodata PIN request has been submitted yet.");
+  renderList(courseRegistrationsList, courseRegistrations, renderCourseRegistration, "No semester course registration has been submitted yet.");
 }
 
 async function loadAdminState() {
@@ -668,6 +1289,7 @@ document.addEventListener("DOMContentLoaded", () => {
   initApplicationForm();
   initFeeEstimator();
   initPortalForms();
+  initCourseRegistration();
   initContactForm();
   initAdminPortal();
 });
