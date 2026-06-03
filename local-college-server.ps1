@@ -21,6 +21,8 @@ function New-EmptyState {
     applications = @()
     contacts = @()
     verifications = @()
+    pinRequests = @()
+    courseRegistrations = @()
     notifications = @()
   }
 }
@@ -31,7 +33,7 @@ function Normalize-State {
   $normalized = New-EmptyState
   if (-not $State) { return $normalized }
 
-  foreach ($key in @("applications", "contacts", "verifications", "notifications")) {
+  foreach ($key in @("applications", "contacts", "verifications", "pinRequests", "courseRegistrations", "notifications")) {
     if ($State.PSObject.Properties.Name -contains $key -and $State.$key) {
       $normalized.$key = @($State.$key)
     }
@@ -62,6 +64,13 @@ function Clean {
   param($Value)
   if ($null -eq $Value) { return "" }
   return [string]$Value.ToString().Trim()
+}
+
+function Clean-Array {
+  param($Value)
+  if ($null -eq $Value) { return @() }
+  if ($Value -is [array]) { return @($Value) }
+  return @($Value)
 }
 
 function New-Record {
@@ -112,6 +121,19 @@ function New-MatricNumber {
   $year = Get-Date -Format yyyy
   $existing = @($State.applications | Where-Object { Clean $_.matricNumber })
   return "PHC/$year/{0:D4}" -f ($existing.Count + 1)
+}
+
+function New-BiodataPin {
+  $suffix = [guid]::NewGuid().ToString("N").Substring(0, 6).ToUpperInvariant()
+  return "PHI-BIO-$(Get-Date -Format yyyy)-$suffix"
+}
+
+function New-CourseRegistrationReference {
+  param($State)
+
+  $year = Get-Date -Format yyyy
+  $existing = @($State.courseRegistrations | Where-Object { Clean $_.registrationReference })
+  return "PHI-CR/$year/{0:D4}" -f ($existing.Count + 1)
 }
 
 function Public-Application {
@@ -369,6 +391,13 @@ function Find-ApplicationByReference {
   })[0]
 }
 
+function Find-PinRequestByPin {
+  param($State, [string]$Pin)
+
+  $cleanPin = (Clean $Pin).ToUpperInvariant()
+  return @($State.pinRequests | Where-Object { (Clean $_.pin).ToUpperInvariant() -eq $cleanPin })[0]
+}
+
 function Invoke-AdminAction {
   param($State, $Payload)
 
@@ -411,6 +440,100 @@ function Invoke-AdminAction {
     $emailContent = New-CollegeApplicationEmail -Application $application -Action $action
     $email = Add-EmailNotification -State $State -To $application.email -Subject $emailContent.subject -Body $emailContent.body -RelatedType "application" -RelatedId $application.id
     return [pscustomobject]@{ message = "$($application.fullName)'s application is now $($application.status)."; email = $email }
+  }
+
+  if ($action -in @("issue-biodata-pin", "reject-biodata-pin", "reopen-biodata-pin")) {
+    $request = @($State.pinRequests | Where-Object { $_.id -eq $id })[0]
+    if (-not $request) { throw "E-biodata PIN request was not found." }
+
+    if ($action -eq "issue-biodata-pin") {
+      $request.status = "issued"
+      $request.issuedAt = (Get-Date).ToUniversalTime().ToString("o")
+      if (-not (Clean $request.pin)) { $request.pin = New-BiodataPin }
+      $body = @"
+Dear $($request.fullName),
+
+PHILOTIMO College has verified your e-biodata PIN payment.
+
+Student ID: $($request.studentId)
+Programme: $($request.programme)
+Semester: $($request.semester)
+E-biodata PIN: $($request.pin)
+
+Use this PIN to register your semester courses on the student portal. Keep it private.
+
+Honour in Service; Dignity in Labour.
+"@
+      $email = Add-EmailNotification -State $State -To $request.email -Subject "PHILOTIMO College e-biodata PIN issued" -Body $body -RelatedType "pinRequest" -RelatedId $request.id
+      return [pscustomobject]@{ message = "E-biodata PIN has been issued to $($request.fullName)."; email = $email }
+    }
+
+    if ($action -eq "reject-biodata-pin") {
+      $request.status = "rejected"
+      $request.issuedAt = ""
+      $body = @"
+Dear $($request.fullName),
+
+PHILOTIMO College has reviewed your e-biodata PIN payment request.
+
+Status: rejected
+Payment reference: $($request.paymentReference)
+Programme: $($request.programme)
+Semester: $($request.semester)
+
+Please contact the admissions office with corrected payment details or clearer proof of payment.
+"@
+      $email = Add-EmailNotification -State $State -To $request.email -Subject "PHILOTIMO College e-biodata PIN payment review" -Body $body -RelatedType "pinRequest" -RelatedId $request.id
+      return [pscustomobject]@{ message = "$($request.fullName)'s e-biodata PIN request has been rejected."; email = $email }
+    }
+
+    $request.status = "pending"
+    $request.issuedAt = ""
+    $body = @"
+Dear $($request.fullName),
+
+PHILOTIMO College has reopened your e-biodata PIN payment request for another review.
+
+Payment reference: $($request.paymentReference)
+Programme: $($request.programme)
+Semester: $($request.semester)
+
+The admissions office will update you after review.
+"@
+    $email = Add-EmailNotification -State $State -To $request.email -Subject "PHILOTIMO College e-biodata PIN review reopened" -Body $body -RelatedType "pinRequest" -RelatedId $request.id
+    return [pscustomobject]@{ message = "$($request.fullName)'s e-biodata PIN request has been moved back to pending."; email = $email }
+  }
+
+  if ($action -in @("approve-course-registration", "reject-course-registration", "reopen-course-registration")) {
+    $registration = @($State.courseRegistrations | Where-Object { $_.id -eq $id })[0]
+    if (-not $registration) { throw "Course registration was not found." }
+
+    if ($action -eq "approve-course-registration") {
+      $registration.status = "approved"
+      $registration.reviewedAt = (Get-Date).ToUniversalTime().ToString("o")
+    } elseif ($action -eq "reject-course-registration") {
+      $registration.status = "rejected"
+      $registration.reviewedAt = (Get-Date).ToUniversalTime().ToString("o")
+    } else {
+      $registration.status = "submitted"
+      $registration.reviewedAt = ""
+    }
+
+    $body = @"
+Dear $($registration.fullName),
+
+PHILOTIMO College has updated your semester course registration.
+
+Registration reference: $($registration.registrationReference)
+Student ID: $($registration.studentId)
+Programme: $($registration.programme)
+Semester: $($registration.semester)
+Status: $($registration.status)
+
+Please keep your registration reference for departmental records.
+"@
+    $email = Add-EmailNotification -State $State -To $registration.email -Subject "PHILOTIMO College course registration update" -Body $body -RelatedType "courseRegistration" -RelatedId $registration.id
+    return [pscustomobject]@{ message = "$($registration.fullName)'s course registration is now $($registration.status)."; email = $email }
   }
 
   if ($action -eq "close-contact") {
@@ -561,6 +684,81 @@ function Handle-Api {
       $state.verifications = @($record) + @($state.verifications)
       Write-State -State $state | Out-Null
       Send-Json -Stream $Stream -StatusCode 201 -Body @{ message = "Verification request received. The administrator will review it."; record = $record }
+    }
+    "/biodata-pin-requests" {
+      Require-Fields -Payload $payload -Fields @("fullName", "studentId", "email", "phone", "programme", "semester", "amountPaid", "paymentReference", "paymentDate", "proofFileName", "proofFileType", "proofDataUrl")
+      $record = New-Record @{
+        fullName = Clean $payload.fullName
+        studentId = Clean $payload.studentId
+        email = Clean $payload.email
+        phone = Clean $payload.phone
+        programme = Clean $payload.programme
+        semester = Clean $payload.semester
+        amountPaid = Clean $payload.amountPaid
+        paymentReference = Clean $payload.paymentReference
+        paymentDate = Clean $payload.paymentDate
+        proofFileName = Clean $payload.proofFileName
+        proofFileType = Clean $payload.proofFileType
+        proofFileSize = Clean $payload.proofFileSize
+        proofDataUrl = Clean $payload.proofDataUrl
+        status = "pending"
+        pin = ""
+        issuedAt = ""
+        linkedRegistrationId = ""
+      }
+      $state.pinRequests = @($record) + @($state.pinRequests)
+      Write-State -State $state | Out-Null
+      Send-Json -Stream $Stream -StatusCode 201 -Body @{ message = "$($record.fullName), your e-biodata PIN payment request has been submitted for admin verification."; record = $record }
+    }
+    "/course-registrations" {
+      Require-Fields -Payload $payload -Fields @("pin", "studentId", "email", "programme", "semester")
+      $courses = @($payload.courses)
+      if (-not $courses.Count) { throw "Please select at least one course before registration." }
+
+      $pinRequest = Find-PinRequestByPin -State $state -Pin (Clean $payload.pin)
+      if (-not $pinRequest) { throw "The e-biodata PIN was not found." }
+      if ($pinRequest.status -ne "issued") { throw "This e-biodata PIN has not been issued for course registration." }
+      if (Clean $pinRequest.linkedRegistrationId) { throw "This e-biodata PIN has already been used for course registration." }
+
+      if ((Clean $pinRequest.studentId).ToUpperInvariant() -ne (Clean $payload.studentId).ToUpperInvariant()) {
+        throw "This e-biodata PIN does not match the supplied student ID."
+      }
+      if ((Clean $pinRequest.programme) -ne (Clean $payload.programme) -or (Clean $pinRequest.semester) -ne (Clean $payload.semester)) {
+        throw "This e-biodata PIN does not match the selected department and semester."
+      }
+
+      $cleanCourses = @($courses | ForEach-Object {
+        [pscustomobject]@{
+          code = Clean $_.code
+          title = Clean $_.title
+          unit = Clean $_.unit
+        }
+      })
+      $totalUnits = 0
+      foreach ($course in $cleanCourses) {
+        $unitValue = 0
+        [int]::TryParse((Clean $course.unit), [ref]$unitValue) | Out-Null
+        $totalUnits += $unitValue
+      }
+
+      $record = New-Record @{
+        registrationReference = New-CourseRegistrationReference -State $state
+        pinRequestId = $pinRequest.id
+        pin = Clean $payload.pin
+        fullName = Clean $pinRequest.fullName
+        studentId = Clean $payload.studentId
+        email = Clean $payload.email
+        programme = Clean $payload.programme
+        semester = Clean $payload.semester
+        courses = $cleanCourses
+        totalUnits = $totalUnits
+        status = "submitted"
+        reviewedAt = ""
+      }
+      $state.courseRegistrations = @($record) + @($state.courseRegistrations)
+      $pinRequest.linkedRegistrationId = $record.id
+      Write-State -State $state | Out-Null
+      Send-Json -Stream $Stream -StatusCode 201 -Body @{ message = "$($record.fullName), your semester course registration has been submitted for departmental review."; record = $record }
     }
     default {
       Send-Json -Stream $Stream -StatusCode 404 -Body @{ message = "API route not found." }
