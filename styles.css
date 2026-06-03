@@ -927,8 +927,109 @@ textarea:focus {
   gap: 18px;
 }
 
+.portal-grid--two {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
 .portal-card h3 {
   margin-bottom: 4px;
+}
+
+.course-registration-zone {
+  display: grid;
+  gap: 22px;
+  margin-top: 42px;
+  padding-top: 36px;
+  border-top: 1px solid var(--line);
+}
+
+.section-heading--compact {
+  max-width: 860px;
+}
+
+.field-note {
+  color: var(--muted);
+  font-size: 0.78rem;
+  font-weight: 700;
+}
+
+.course-picker {
+  display: grid;
+  gap: 10px;
+  max-height: 430px;
+  overflow: auto;
+  padding: 12px;
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  background: #fff;
+}
+
+.course-picker p {
+  margin: 0;
+  color: var(--muted);
+}
+
+.course-picker__heading {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  padding-bottom: 8px;
+  border-bottom: 1px solid var(--line);
+}
+
+.course-picker__heading span {
+  color: var(--muted);
+  font-weight: 800;
+}
+
+.course-option {
+  display: grid;
+  grid-template-columns: 18px minmax(0, 1fr) auto;
+  align-items: start;
+  gap: 10px;
+  padding: 10px;
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  background: var(--surface-soft);
+  font-size: 0.9rem;
+}
+
+.course-option input {
+  width: 18px;
+  height: 18px;
+  margin-top: 2px;
+}
+
+.course-option span {
+  color: var(--text);
+}
+
+.course-option em {
+  color: var(--primary-dark);
+  font-style: normal;
+  font-weight: 900;
+  white-space: nowrap;
+}
+
+.course-total {
+  margin: 0;
+  color: var(--primary-dark);
+  font-weight: 900;
+}
+
+.course-source-note {
+  display: grid;
+  gap: 6px;
+  padding: 16px;
+  border: 1px solid rgba(182, 136, 43, 0.34);
+  border-radius: var(--radius);
+  background: var(--surface-warm);
+}
+
+.course-source-note span {
+  color: var(--muted);
 }
 
 .admin-portal {
@@ -1077,6 +1178,12 @@ textarea:focus {
 .status-chip--enrolled {
   background: #e6edf6;
   color: var(--navy);
+}
+
+.status-chip--issued,
+.status-chip--approved {
+  background: #e7f6f1;
+  color: var(--primary-dark);
 }
 
 .record-actions {
