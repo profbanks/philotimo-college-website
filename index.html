@@ -39,6 +39,7 @@
         <a href="#departments">Departments</a>
         <a href="#admissions">Admissions</a>
         <a href="#portal">Portal</a>
+        <a href="#course-registration">Course Registration</a>
         <a href="#contact">Contact</a>
       </nav>
 
@@ -346,6 +347,114 @@
           </form>
         </div>
 
+        <div class="course-registration-zone" id="course-registration">
+          <div class="section-heading section-heading--compact">
+            <span class="eyebrow">E-Biodata PIN and Semester Courses</span>
+            <h2>Register semester courses after payment for an e-biodata PIN.</h2>
+            <p>Students request an e-biodata PIN after payment. Once the administrator verifies payment and issues the PIN, the student can register courses for the selected department and semester.</p>
+          </div>
+
+          <div class="portal-grid portal-grid--two">
+            <form class="portal-card" data-pin-request-form>
+              <h3>Request E-Biodata PIN</h3>
+              <label>
+                Full name
+                <input name="fullName" type="text" autocomplete="name" required>
+              </label>
+              <label>
+                Application or matric number
+                <input name="studentId" type="text" placeholder="PHI-2026-AB12 or PHC/2026/0001" required>
+              </label>
+              <label>
+                Email address
+                <input name="email" type="email" autocomplete="email" required>
+              </label>
+              <label>
+                Phone number
+                <input name="phone" type="tel" autocomplete="tel" required>
+              </label>
+              <label>
+                Department / programme
+                <select name="programme" data-pin-programme-select required>
+                  <option value="">Select department</option>
+                </select>
+              </label>
+              <label>
+                Semester
+                <select name="semester" required>
+                  <option value="">Select semester</option>
+                  <option value="nd1-1">ND I - First Semester</option>
+                  <option value="nd1-2">ND I - Second Semester</option>
+                  <option value="nd2-1">ND II - First Semester</option>
+                  <option value="nd2-2">ND II - Second Semester</option>
+                </select>
+              </label>
+              <label>
+                Amount paid for e-biodata PIN
+                <input name="amountPaid" type="number" min="0" step="100" placeholder="Enter amount in naira" required>
+              </label>
+              <label>
+                Payment reference / teller number
+                <input name="paymentReference" type="text" required>
+              </label>
+              <label>
+                Payment date
+                <input name="paymentDate" type="date" required>
+              </label>
+              <label>
+                Proof of payment
+                <input name="paymentProof" type="file" accept="image/png,image/jpeg,image/webp,application/pdf" required>
+                <small class="field-note">Upload a clear image or PDF. Maximum file size: 1.5 MB.</small>
+              </label>
+              <button class="button button--dark" type="submit">Submit PIN Request</button>
+              <output data-pin-request-result></output>
+            </form>
+
+            <form class="portal-card" data-course-registration-form>
+              <h3>Register Semester Courses</h3>
+              <label>
+                E-biodata PIN
+                <input name="pin" type="text" placeholder="PHI-BIO-2026-XXXXXX" required>
+              </label>
+              <label>
+                Application or matric number
+                <input name="studentId" type="text" required>
+              </label>
+              <label>
+                Student email
+                <input name="email" type="email" required>
+              </label>
+              <label>
+                Department / programme
+                <select name="programme" data-registration-programme-select required>
+                  <option value="">Select department</option>
+                </select>
+              </label>
+              <label>
+                Semester
+                <select name="semester" data-registration-semester required>
+                  <option value="">Select semester</option>
+                  <option value="nd1-1">ND I - First Semester</option>
+                  <option value="nd1-2">ND I - Second Semester</option>
+                  <option value="nd2-1">ND II - First Semester</option>
+                  <option value="nd2-2">ND II - Second Semester</option>
+                </select>
+              </label>
+              <div class="course-picker" data-course-picker>
+                <p>Select a department and semester to load the NBTE-aligned courses.</p>
+              </div>
+              <p class="course-total" data-course-total>0 courses selected.</p>
+              <button class="button button--dark" type="submit">Register Selected Courses</button>
+              <output data-course-registration-result></output>
+            </form>
+          </div>
+
+          <aside class="course-source-note">
+            <strong>Curriculum source note</strong>
+            <span>Course lists are prepared from NBTE curriculum records and professional-body collaboration notes where available, including PCN for Pharmacy Technician, EHORECON for Public Health Technology, and the Dental Therapists/Technologists regulatory curriculum references. Academic officers should confirm final course loads before official registration windows open.</span>
+          </aside>
+        </div>
+
         <div class="admin-portal" id="admin" data-admin-portal aria-labelledby="admin-title" hidden>
           <div class="admin-access">
             <div>
@@ -369,6 +478,9 @@
               <div><strong data-pending-applications>0</strong><span>Pending Review</span></div>
               <div><strong data-approved-applications>0</strong><span>Approved</span></div>
               <div><strong data-enrolled-students>0</strong><span>Enrolled Students</span></div>
+              <div><strong data-pin-requests>0</strong><span>PIN Requests</span></div>
+              <div><strong data-issued-pins>0</strong><span>Issued PINs</span></div>
+              <div><strong data-course-registrations>0</strong><span>Course Registrations</span></div>
             </div>
 
             <div class="admin-toolbar">
@@ -392,6 +504,14 @@
               <section class="admin-panel" aria-labelledby="verifications-title">
                 <h3 id="verifications-title">Verification Requests</h3>
                 <div class="record-list" data-verifications-list></div>
+              </section>
+              <section class="admin-panel admin-panel--wide" aria-labelledby="pin-requests-title">
+                <h3 id="pin-requests-title">E-Biodata PIN Payment Requests</h3>
+                <div class="record-list" data-pin-requests-list></div>
+              </section>
+              <section class="admin-panel admin-panel--wide" aria-labelledby="course-registrations-title">
+                <h3 id="course-registrations-title">Semester Course Registrations</h3>
+                <div class="record-list" data-course-registrations-list></div>
               </section>
             </div>
           </div>
@@ -544,6 +664,6 @@
     </article>
   </template>
 
-  <script src="script.js?v=admin-private-email"></script>
+  <script src="script.js?v=course-registration-pin"></script>
 </body>
 </html>
